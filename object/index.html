@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>真实感物体</title>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="js/three.min.js"></script>
+</head>
+
+<body>
+    <script type="module">
+        var camera, scene, renderer;
+        init();
+        animate();
+        function init() {
+            // 场景
+            scene = new THREE.Scene();
+
+            // 相机
+            camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.set(80, 40, -20);
+            camera.lookAt(new THREE.Vector3(0, 0, 0));
+            scene.add(camera);
+
+            // 点光源1
+            var pointLight = new THREE.PointLight(0xffffff, 1, 0);
+            pointLight.position.set(25, 40, -30);
+            pointLight.castShadow = true;
+            pointLight.intensity = 1;
+            scene.add(pointLight);
+
+            // 点光源2
+            var pointLight2 = new THREE.PointLight(0xffffff, 1, 0);
+            pointLight2.position.set(50, 30, -30);
+            pointLight2.castShadow = true;
+            pointLight2.intensity = 0.8;
+            scene.add(pointLight2);
+
+            // 环境光
+            var ambientLight = new THREE.AmbientLight(0xffffff);
+            ambientLight.intensity = 0.2;
+            scene.add(ambientLight);
+
+            // 木材贴图
+            var texture = new THREE.TextureLoader().load('image/wood.jpg');
+
+            // 木材材质
+            var material = new THREE.MeshStandardMaterial({ map: texture });
+            material.roughness = 0.7;
+            material.metalness = 0.2;
+
+            // 立方体
+            var cube = new THREE.Mesh(new THREE.CubeGeometry(10, 10, 10), material);
+            cube.receiveShadow = true;
+            cube.castShadow = true;
+            cube.position.x = 0;
+            cube.position.y = 5;
+            cube.position.z = 0;
+            scene.add(cube);
+
+            // 平面
+            var planeGeometry = new THREE.PlaneGeometry(50, 50);
+            var planeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+            var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.castShadow = true;
+            plane.receiveShadow = true;
+            plane.rotation.x = -0.5 * Math.PI;
+            plane.position.x = 0;
+            plane.position.y = 0;
+            plane.position.z = 0;
+            scene.add(plane);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true }); // 防锯齿
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0xdddddd);
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement);
+        }
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+
+</html>
